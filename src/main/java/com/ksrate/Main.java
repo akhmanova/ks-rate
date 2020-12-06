@@ -49,17 +49,15 @@ public class Main {
     }
 
 
+    @Getter
     public static class Arguments {
 
-        @Getter
         @Parameter(names = {"csvPath"}, description = "Path to local csv file")
         String localCsvBasePath;
 
-        @Getter
         @Parameter(names = {"gcsAuth"}, description = "Path to Google Cloud Storage Auth json file")
         String gcsJsonAuthFilePath;
 
-        @Getter
         @Parameter(names = {"--noGcs"}, description = "Disable GSC")
         boolean noGoogleCloudStorage = false;
 
