@@ -2,6 +2,7 @@ package com.ksrate.archive;
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.cloud.storage.*;
+import com.ksrate.Main;
 import com.ksrate.data.Statistic;
 
 import java.io.FileInputStream;
@@ -11,6 +12,9 @@ import java.nio.charset.StandardCharsets;
 
 public class ArchiveData {
     public void push(Statistic statistic) {
+        if (Main.arguments.isNoGoogleCloudStorage()) {
+            return;
+        }
         Storage storage = getStorage();
         final String bucketName = "ks-archive";
         final String objectName = "statistic";
@@ -20,8 +24,7 @@ public class ArchiveData {
     }
 
     private Storage getStorage() {
-        //TODO: add parameter
-        String authJson = null;
+        String authJson = Main.arguments.getGcsJsonAuthFilePath();
         if (authJson != null) {
             try (final FileInputStream jsonInputStream = new FileInputStream(authJson)) {
                 return StorageOptions.newBuilder()
