@@ -14,17 +14,26 @@ import java.io.IOException;
 
 @Log4j2
 public class Main {
-    public static void main(String[] args) throws IOException {
-        String path = args[0];
-        BufferedReader reader = new BufferedReader(new FileReader(path));
-        String row;
-        while ((row = reader.readLine()) != null) {
-            final Statistic statistic = new Statistic(row);
-            pushMetrics(statistic);
-            pushArchive(statistic);
 
+    public static Arguments arguments;
+
+    public static void main(String[] args) throws IOException {
+        arguments = Arguments.getArgs(args);
+        String localCsvBasePath = arguments.getLocalCsvBasePath();
+        if (localCsvBasePath != null) {
+            BufferedReader reader = new BufferedReader(new FileReader(localCsvBasePath));
+            String row;
+            while ((row = reader.readLine()) != null) {
+                final Statistic statistic = new Statistic(row);
+                pushMetrics(statistic);
+                pushArchive(statistic);
+
+            }
+            reader.close();
+        } else {
+            throw new IllegalArgumentException("Processing without LocalCsv base not supported. "
+                    + "Use 'csvPath <path>' parameter.");
         }
-        reader.close();
     }
 
     //For metric works
