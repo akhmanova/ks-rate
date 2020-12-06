@@ -11,6 +11,9 @@ import java.io.IOException;
 
 @Log4j2
 public class Main {
+    final static ArchiveData archiveData = new ArchiveData();
+    final static Metrics metrics = new Metrics();
+
     public static void main(String[] args) throws IOException {
         String path = args[0];
         BufferedReader reader = new BufferedReader(new FileReader(path));
@@ -26,13 +29,11 @@ public class Main {
 
     //For metric works
     private static void pushMetrics(Statistic statistic) {
-        final Metrics metrics = new Metrics();
         metrics.push(statistic);
     }
 
     //For archive works
     private static void pushArchive(Statistic statistic) {
-        final ArchiveData archiveData = new ArchiveData();
         archiveData.push(statistic);
     }
 }
