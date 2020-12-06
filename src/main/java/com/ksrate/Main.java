@@ -21,15 +21,15 @@ public class Main {
         arguments = Arguments.getArgs(args);
         String localCsvBasePath = arguments.getLocalCsvBasePath();
         if (localCsvBasePath != null) {
-            BufferedReader reader = new BufferedReader(new FileReader(localCsvBasePath));
-            String row;
-            while ((row = reader.readLine()) != null) {
-                final Statistic statistic = new Statistic(row);
-                pushMetrics(statistic);
-                pushArchive(statistic);
+            try (BufferedReader reader = new BufferedReader(new FileReader(localCsvBasePath))) {
+                String row;
+                while ((row = reader.readLine()) != null) {
+                    final Statistic statistic = new Statistic(row);
+                    pushMetrics(statistic);
+                    pushArchive(statistic);
 
+                }
             }
-            reader.close();
         } else {
             throw new IllegalArgumentException("Processing without LocalCsv base not supported. "
                     + "Use 'csvPath <path>' parameter.");
