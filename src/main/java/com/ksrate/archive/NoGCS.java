@@ -1,8 +1,9 @@
-package com.ksrate.metric;
+package com.ksrate.archive;
 
 import com.ksrate.data.Statistic;
 
-public class Metrics {
+public class NoGCS extends ArchiveData {
+    @Override
     public void push(Statistic statistic) {
     }
 }

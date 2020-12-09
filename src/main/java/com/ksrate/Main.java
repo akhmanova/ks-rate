@@ -14,11 +14,12 @@ import java.io.IOException;
 
 @Log4j2
 public class Main {
-
     public static Arguments arguments;
+    private static ArchiveData archiveData;
+    private static Metrics metrics;
 
     public static void main(String[] args) throws IOException {
-        arguments = Arguments.getArgs(args);
+        initiate(args);
         String localCsvBasePath = arguments.getLocalCsvBasePath();
         if (localCsvBasePath != null) {
             try (BufferedReader reader = new BufferedReader(new FileReader(localCsvBasePath))) {
@@ -36,15 +37,19 @@ public class Main {
         }
     }
 
+    private static void initiate(String[] args) {
+        arguments = Arguments.getArgs(args);
+        archiveData = ArchiveData.getInstance();
+        metrics = new Metrics();
+    }
+
     //For metric works
     private static void pushMetrics(Statistic statistic) {
-        final Metrics metrics = new Metrics();
         metrics.push(statistic);
     }
 
     //For archive works
     private static void pushArchive(Statistic statistic) {
-        final ArchiveData archiveData = new ArchiveData();
         archiveData.push(statistic);
     }
 
@@ -55,11 +60,8 @@ public class Main {
         @Parameter(names = {"csvPath"}, description = "Path to local csv file")
         String localCsvBasePath;
 
-        @Parameter(names = {"gcsAuth"}, description = "Path to Google Cloud Storage Auth json file")
-        String gcsJsonAuthFilePath;
-
-        @Parameter(names = {"--noGcs"}, description = "Disable GSC")
-        boolean noGoogleCloudStorage = false;
+        @Parameter(names = {"gcsConfig"}, description = "Path to Google Cloud Storage module config file")
+        String gcsConfigPath = "./gcs_config.properties";
 
         public static Arguments getArgs(String... args) {
             Arguments params = new Arguments();
