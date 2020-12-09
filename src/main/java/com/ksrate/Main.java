@@ -61,7 +61,7 @@ public class Main {
         String localCsvBasePath;
 
         @Parameter(names = {"gcsConfig"}, description = "Path to Google Cloud Storage module config file")
-        String gcsConfigPath = "gcs_config.properties";
+        String gcsConfigPath = "./gcs_config.properties";
 
         public static Arguments getArgs(String... args) {
             Arguments params = new Arguments();
