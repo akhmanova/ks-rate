@@ -1,0 +1,5 @@
+credentials: ""
+csv_file: "ks-projects-201801.csv"
+project: "fake"
+topic: "events"
+sleep: 3
