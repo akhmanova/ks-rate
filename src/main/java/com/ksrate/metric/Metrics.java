@@ -4,6 +4,5 @@ import com.ksrate.data.Statistic;
 
 public class Metrics {
     public void push(Statistic statistic) {
-        System.out.println(statistic.getState());
     }
 }
