@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -19,13 +20,11 @@ public class ArchiveData {
     private String bucketName;
     private String blobName;
     private Storage storage;
-    private boolean used = false;
 
     private ArchiveData(Properties properties) {
         bucketName = properties.getProperty("gcs.bucket.name");
         blobName = properties.getProperty("gcs.blob.name");
         storage = getStorage(properties.getProperty("gcs.auth.path"));
-        used = true;
     }
 
     public static ArchiveData getInstance() {
@@ -33,18 +32,15 @@ public class ArchiveData {
             final Properties properties = new Properties();
             properties.load(Files.newInputStream(Paths.get(Main.arguments.getGcsConfigPath())));
             return new ArchiveData(properties);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NoSuchFileException e) {
             System.out.println("Start without GCS");
-            return new ArchiveData();
+            return new NoGCS();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
 
     public void push(Statistic statistic) {
-        if (!used) {
-            return;
-        }
         BlobId blobId = BlobId.of(bucketName, blobName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
         final Blob blob = storage.get(bucketName, blobName);
