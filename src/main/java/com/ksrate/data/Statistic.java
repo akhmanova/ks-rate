@@ -3,9 +3,11 @@ package com.ksrate.data;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @ToString
 @Getter
-public class Statistic {
+public class Statistic implements Serializable {
 
     private static final String SEPARATOR = ",";
 
