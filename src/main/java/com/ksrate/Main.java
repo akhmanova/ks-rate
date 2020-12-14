@@ -7,34 +7,37 @@ import com.ksrate.data.Statistic;
 import com.ksrate.metric.Metrics;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaSparkContext;
 
 @Log4j2
 public class Main {
     public static Arguments arguments;
+    static JavaSparkContext sc;
+    static String appName = "ks-rate";
     private static ArchiveData archiveData;
     private static Metrics metrics;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         initiate(args);
-        String localCsvBasePath = arguments.getLocalCsvBasePath();
-        if (localCsvBasePath != null) {
-            try (BufferedReader reader = new BufferedReader(new FileReader(localCsvBasePath))) {
-                String row;
-                while ((row = reader.readLine()) != null) {
-                    final Statistic statistic = new Statistic(row);
-                    pushMetrics(statistic);
-                    pushArchive(statistic);
+        spark();
+    }
 
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("Processing without LocalCsv base not supported. "
-                    + "Use 'csvPath <path>' parameter.");
-        }
+    private static void setup() {
+        SparkConf conf = new SparkConf().setAppName(appName).setMaster("local[*]");
+        sc = new JavaSparkContext(conf);
+
+        sc.textFile(arguments.getLocalCsvBasePath())
+                .map(Statistic::new)
+                .foreach(statistic -> {
+                    pushArchive(statistic);
+                    pushMetrics(statistic);
+                });
+
+    }
+
+    private static void spark() {
+        setup();
     }
 
     private static void initiate(String[] args) {
