@@ -8,21 +8,7 @@ import com.ksrate.metric.Metrics;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.storage.StorageLevel;
-import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaDStream;
-import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
-import org.apache.spark.streaming.api.java.JavaStreamingContext;
-import org.apache.spark.streaming.pubsub.PubsubUtils;
-import org.apache.spark.streaming.pubsub.SparkGCPCredentials;
-import org.apache.spark.streaming.pubsub.SparkPubsubMessage;
-
-import javax.management.monitor.Monitor;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Scanner;
 
 @Log4j2
 public class Main {
@@ -32,7 +18,7 @@ public class Main {
     private static ArchiveData archiveData;
     private static Metrics metrics;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         initiate(args);
         spark();
     }
