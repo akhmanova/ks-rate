@@ -28,10 +28,10 @@ public class DatabaseAccess {
             this.checkCountsExist = connection.prepareStatement(
                     "select successcount, failcount from projectStateCount where id = 1");
 
-            this.checkCountry = connection.prepareStatement("select 1 from countrystats where LOWER(country) = ?");
+            this.checkCountry = connection.prepareStatement("select 1 from countryStatswhere country = ?");
 
             this.insertCountry = connection.prepareStatement(
-                    "insert into countrystats (country, successcount, failcount) values (?, 0, 0)");
+                    "insert into countryStats (country, successcount, failcount) values (?, 0, 0)");
 
             this.increaseSuccessCount = connection.prepareStatement(
                     "update projectStateCount set successcount = successcount + 1 where id = 1 limit 1");
@@ -40,20 +40,20 @@ public class DatabaseAccess {
                     "update projectStateCount set failcount = failcount + 1 where id = 1 limit 1");
 
             this.increaseCountrySuccess = connection.prepareStatement(
-                    "update countryStats set successCount = successCount + 1 where LOWER(country) = ? limit 1");
+                    "update countryStats set successCount = successCount + 1 where country = ? limit 1");
 
             this.increaseCountryFailed = connection.prepareStatement(
-                    "update countryStats set failCount = failCount + 1 where LOWER(country) = ? limit 1");
+                    "update countryStats set failCount = failCount + 1 where country = ? limit 1");
 
             this.fillTop10Successful = connection.prepareStatement("insert into top10success (country, successcount) " +
-                    "select country, successcount from countrystats order by successcount desc limit 10");
+                    "select country, successcount from countryStats order by successcount desc limit 10");
 
             this.fillTop10Failed = connection.prepareStatement("insert into top10failed (country, failcount) " +
-                    "select country, failcount from countrystats order by failcount desc limit 10");
+                    "select country, failcount from countryStats order by failcount desc limit 10");
 
             if (!checkCountsExist.executeQuery().next()) {
                 connection.createStatement().executeUpdate(
-                        "insert into projectstatecount(id, successcount, failcount) values (1, 0, 0)");
+                        "insert into projectStateCount(id, successcount, failcount) values (1, 0, 0)");
             }
         } catch(Exception e) { System.out.println(e);}
     }

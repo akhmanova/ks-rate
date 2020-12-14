@@ -28,7 +28,7 @@ public class Statistic implements Serializable {
 
     public Statistic(String s) {
         source = s;
-        final String[] split = s.split(SEPARATOR);
+        final String[] split = s.toLowerCase().split(SEPARATOR);
         id = split[0];
         name = split[1];
         category = split[2];
