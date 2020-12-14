@@ -1,5 +1,5 @@
-credentials: ""
-csv_file: "ks-projects-201801.csv"
-project: "fake"
-topic: "events"
+credentials: "ks-rate-app.json"
+csv_file: "t.csv"
+project: "ks-rate-297815"
+topic: "ks-rate"
 sleep: 3

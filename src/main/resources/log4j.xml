@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" strict="true">
+
+    <Properties>
+        <Property name="logDir">log</Property>
+        <Property name="personalDir">personal</Property>
+        <Property name="filename">CfCdsConverter</Property>
+        <Property name="personalFilename">CfCdsPersonal</Property>
+    </Properties>
+    <Appenders>
+        <Console name="console-log" target="SYSTEM_OUT">
+            <PatternLayout pattern="%p: %m%n"/>
+        </Console>
+        <RollingFile name="LogFile" filename="${logDir}/${filename}.log"
+                     filePattern="${logDir}/$${date:dd-MM-yyyy}/${filename}-%d{dd-MM-yyyy-hh-mm-ss}.log.gz">
+            <PatternLayout>
+                <Pattern>%d %c{1.} [%t] %p: %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="LogPersonalFile" filename="${personalDir}/${personalFilename}.log"
+                     filePattern="${personalDir}/$${date:dd-MM-yyyy}/${filename}-%d{dd-MM-yyyy-hh-mm-ss}.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p: %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="ru.neoflex.okb" additivity="false"
+                level="trace">
+            <AppenderRef ref="LogFile"/>
+            <AppenderRef ref="console-log" level="info"/>
+        </Logger>
+        <Logger name="ru.neoflex.okb.personal" additivity="false"
+                level="info">
+            <AppenderRef ref="LogPersonalFile"/>
+            <AppenderRef ref="console-log" level="warn"/>
+        </Logger>
+        <Root level="debug">
+            <AppenderRef ref="LogFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
