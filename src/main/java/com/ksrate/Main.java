@@ -37,7 +37,7 @@ public class Main {
     private static void initiate(String[] args) {
         arguments = Arguments.getArgs(args);
         SparkConf conf = new SparkConf().setAppName(appName).setMaster("local[*]");
-        sc = new JavaSparkContext(conf);
+//        sc = new JavaSparkContext(conf);
         jsc = new JavaStreamingContext(conf, Seconds.apply(15));
 
         archiveData = ArchiveData.getInstance();
