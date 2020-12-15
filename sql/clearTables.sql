@@ -1,6 +1,6 @@
 #Clear tables and reset the counters (id's)
 delete from projectStateCount;
-alter table projectStateCountAUTO_INCREMENT = 1;
+alter table projectStateCount AUTO_INCREMENT = 1;
 insert into projectStateCount(id, successcount, failcount) values (1, 0, 0);
 
 delete from countryStats;

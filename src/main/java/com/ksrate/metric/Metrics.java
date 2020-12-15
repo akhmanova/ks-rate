@@ -1,15 +1,16 @@
 package com.ksrate.metric;
 
 import com.ksrate.data.Statistic;
-import com.ksrate.dbacess.DatabaseAccess;
 
 import java.io.Serializable;
 
 public class Metrics implements Serializable {
     private final DatabaseAccess db;
+
     public Metrics() {
         this.db = new DatabaseAccess();
     }
+
     public void push(Statistic statistic) {
         String state = statistic.getState().toLowerCase();
         if (state.equals("successful")) {
