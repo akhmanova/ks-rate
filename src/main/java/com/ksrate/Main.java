@@ -17,6 +17,8 @@ import org.apache.spark.streaming.pubsub.PubsubUtils;
 import org.apache.spark.streaming.pubsub.SparkGCPCredentials;
 import org.apache.spark.streaming.pubsub.SparkPubsubMessage;
 
+import java.util.concurrent.TimeUnit;
+
 @Log4j2
 public class Main {
     private static final String PROJECT_ID = "ks-rate-297815";
@@ -63,6 +65,16 @@ public class Main {
                     pushMetrics(statistic);
                 })
         );
+
+        try {
+            jsc.start();
+            // Let the job run for the given duration and then terminate it.
+            jsc.awaitTermination();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            jsc.stop(true, true);
+        }
 
 //        sc.textFile(arguments.getLocalCsvBasePath())
 //                .map(Statistic::new)
