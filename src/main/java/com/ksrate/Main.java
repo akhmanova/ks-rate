@@ -23,27 +23,20 @@ public class Main {
         spark();
     }
 
-    private static void setup() {
-        SparkConf conf = new SparkConf().setAppName(appName).setMaster("local[*]");
-        sc = new JavaSparkContext(conf);
+    private static void initiate(String[] args) {
+        arguments = Arguments.getArgs(args);
+        sc = new JavaSparkContext(new SparkConf().setAppName(appName).setMaster("local[*]"));
+        archiveData = ArchiveData.getInstance();
+        metrics = new Metrics();
+    }
 
+    private static void spark() {
         sc.textFile(arguments.getLocalCsvBasePath())
                 .map(Statistic::new)
                 .foreach(statistic -> {
                     pushArchive(statistic);
                     pushMetrics(statistic);
                 });
-
-    }
-
-    private static void spark() {
-        setup();
-    }
-
-    private static void initiate(String[] args) {
-        arguments = Arguments.getArgs(args);
-        archiveData = ArchiveData.getInstance();
-        metrics = new Metrics();
     }
 
     //For metric works
@@ -62,6 +55,9 @@ public class Main {
 
         @Parameter(names = {"csvPath"}, description = "Path to local csv file")
         String localCsvBasePath;
+
+        @Parameter(names = {"dbp"}, description = "Path to db connection properties file")
+        String dbPropertiesPath = "./connection.properties";
 
         @Parameter(names = {"gcsConfig"}, description = "Path to Google Cloud Storage module config file")
         String gcsConfigPath = "./gcs_config.properties";
