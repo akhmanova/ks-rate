@@ -17,8 +17,6 @@ import org.apache.spark.streaming.pubsub.PubsubUtils;
 import org.apache.spark.streaming.pubsub.SparkGCPCredentials;
 import org.apache.spark.streaming.pubsub.SparkPubsubMessage;
 
-import java.util.concurrent.TimeUnit;
-
 @Log4j2
 public class Main {
     private static final String PROJECT_ID = "ks-rate-297815";
@@ -39,7 +37,6 @@ public class Main {
     private static void initiate(String[] args) {
         arguments = Arguments.getArgs(args);
         SparkConf conf = new SparkConf().setAppName(appName).setMaster("local[*]");
-//        sc = new JavaSparkContext(conf);
         jsc = new JavaStreamingContext(conf, Seconds.apply(15));
 
         archiveData = ArchiveData.getInstance();
@@ -56,32 +53,22 @@ public class Main {
                         .build(),
                 StorageLevel.MEMORY_AND_DISK_SER()
         );
-        dStream.foreachRDD(rdd -> rdd.map(SparkPubsubMessage::getData)
+        dStream.map(SparkPubsubMessage::getData)
                 .map(String::new)
                 .map(Statistic::new)
-                .foreach(statistic -> {
-
-                    pushArchive(statistic);
-                    pushMetrics(statistic);
-                })
-        );
-
+                .foreachRDD(rdd -> rdd.foreach(statistic -> {
+                                    pushArchive(statistic);
+                                    pushMetrics(statistic);
+                                })
+                );
         try {
             jsc.start();
-            // Let the job run for the given duration and then terminate it.
             jsc.awaitTermination();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             jsc.stop(true, true);
         }
-
-//        sc.textFile(arguments.getLocalCsvBasePath())
-//                .map(Statistic::new)
-//                .foreach(statistic -> {
-//                    pushArchive(statistic);
-//                    pushMetrics(statistic);
-//                });
     }
 
     //For metric works
