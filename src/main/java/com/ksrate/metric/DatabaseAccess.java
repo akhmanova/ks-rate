@@ -1,8 +1,15 @@
-package com.ksrate.dbacess;
+package com.ksrate.metric;
 
+import com.ksrate.Main;
+import lombok.SneakyThrows;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
+import java.util.Properties;
 
 public class DatabaseAccess {
+    private final Properties connectionProperties;
     private PreparedStatement checkCountsExist = null;
     private PreparedStatement checkCountry = null;
     private PreparedStatement insertCountry = null;
@@ -12,10 +19,10 @@ public class DatabaseAccess {
     private PreparedStatement increaseCountryFailed = null;
     private PreparedStatement fillTop10Successful = null;
     private PreparedStatement fillTop10Failed = null;
-
     private Connection connection = null;
 
     public DatabaseAccess() {
+        connectionProperties = getProperties();
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             this.connection = DriverManager.getConnection(
@@ -23,12 +30,12 @@ public class DatabaseAccess {
                             "?useUnicode=true" +
                             "&useJDBCCompliantTimezoneShift=true" +
                             "&useLegacyDatetimeCode=false" +
-                            "&serverTimezone=UTC","sparkapp","password123");
+                            "&serverTimezone=UTC", connectionProperties);
 
             this.checkCountsExist = connection.prepareStatement(
                     "select successcount, failcount from projectStateCount where id = 1");
 
-            this.checkCountry = connection.prepareStatement("select 1 from countryStatswhere country = ?");
+            this.checkCountry = connection.prepareStatement("select 1 from countryStats where country = ?");
 
             this.insertCountry = connection.prepareStatement(
                     "insert into countryStats (country, successcount, failcount) values (?, 0, 0)");
@@ -55,14 +62,23 @@ public class DatabaseAccess {
                 connection.createStatement().executeUpdate(
                         "insert into projectStateCount(id, successcount, failcount) values (1, 0, 0)");
             }
-        } catch(Exception e) { System.out.println(e);}
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SneakyThrows
+    private Properties getProperties() {
+        final Properties connectionProperties = new Properties();
+        connectionProperties.load(Files.newInputStream(Paths.get(Main.arguments.getDbPropertiesPath())));
+        return connectionProperties;
     }
 
     public void increaseSuccessCount() {
         try {
             increaseSuccessCount.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -70,9 +86,10 @@ public class DatabaseAccess {
         try {
             increaseFailCount.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
+
     public void increaseCountrySuccess(String country) {
         try {
             checkCountry.setString(1, country.toLowerCase());
@@ -84,7 +101,7 @@ public class DatabaseAccess {
             increaseCountrySuccess.setString(1, country);
             increaseCountrySuccess.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -99,7 +116,7 @@ public class DatabaseAccess {
             increaseCountryFailed.setString(1, country);
             increaseCountryFailed.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -111,7 +128,7 @@ public class DatabaseAccess {
                     "alter table top10success AUTO_INCREMENT = 1");
             fillTop10Successful.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -123,7 +140,7 @@ public class DatabaseAccess {
                     "alter table top10failed AUTO_INCREMENT = 1");
             fillTop10Failed.executeUpdate();
         } catch (SQLException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 }
